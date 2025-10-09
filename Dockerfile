@@ -19,5 +19,8 @@ RUN npm install -g puppeteer && \
 # Tell Puppeteer where Chromium is located in Alpine
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+# Disable Chromium sandbox (required inside Docker)
+ENV PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox"
+
 # Drop back to node user
 USER node
