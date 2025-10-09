@@ -57,6 +57,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
 
   qdrant:
     image: qdrant/qdrant
