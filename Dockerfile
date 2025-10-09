@@ -1,26 +1,36 @@
-# Use official n8n image (Alpine-based)
-FROM n8nio/n8n:latest
+FROM docker.n8n.io/n8nio/n8n
 
 USER root
 
-# Install Chromium and required dependencies
+# Install Chrome dependencies and Chrome
 RUN apk add --no-cache \
     chromium \
     nss \
+    glib \
     freetype \
+    freetype-dev \
     harfbuzz \
     ca-certificates \
-    ttf-freefont
+    ttf-freefont \
+    udev \
+    ttf-liberation \
+    font-noto-emoji
 
-# Install Puppeteer globally but skip downloading its bundled Chromium
-RUN npm install -g puppeteer && \
-    PUPPETEER_SKIP_DOWNLOAD=true npm install puppeteer
+# Tell Puppeteer to use installed Chrome instead of downloading it
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Tell Puppeteer where Chromium is located in Alpine
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Install n8n-nodes-puppeteer in a permanent location
+RUN mkdir -p /opt/n8n-custom-nodes && \
+    cd /opt/n8n-custom-nodes && \
+    npm install n8n-nodes-puppeteer && \
+    chown -R node:node /opt/n8n-custom-nodes
 
-# Disable Chromium sandbox (required inside Docker)
-ENV PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox"
+# Copy our custom entrypoint
+COPY docker-custom-entrypoint.sh /docker-custom-entrypoint.sh
+RUN chmod +x /docker-custom-entrypoint.sh && \
+    chown node:node /docker-custom-entrypoint.sh
 
-# Drop back to node user
 USER node
+
+ENTRYPOINT ["/docker-custom-entrypoint.sh"]
