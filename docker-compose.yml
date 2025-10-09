@@ -20,7 +20,8 @@ x-n8n: &service-n8n
     - N8N_PERSONALIZATION_ENABLED=false
     - N8N_ENCRYPTION_KEY
     - N8N_USER_MANAGEMENT_JWT_SECRET
-    - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+    - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    - PUPPETEER_ARGS=--no-sandbox --disable-setuid-sandbox
   env_file:
     - path: .env
       required: true
