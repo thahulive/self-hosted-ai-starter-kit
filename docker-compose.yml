@@ -64,3 +64,17 @@ services:
       - 6333:6333
     volumes:
       - qdrant_storage:/qdrant/storage
+
+  puppeteer:
+    image: ghcr.io/puppeteer/puppeteer:latest
+    hostname: puppeteer
+    container_name: puppeteer
+    networks: ['aikit']
+    restart: unless-stopped
+    # Uncomment if you want to debug or connect from host
+    # ports:
+    #   - "9222:9222"
+    environment:
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+    volumes:
+      - ./shared:/data/shared
