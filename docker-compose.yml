@@ -9,7 +9,7 @@ networks:
 x-n8n: &service-n8n
   build:
     context: .
-    dockerfile: Dockerfile.n8n
+    dockerfile: Dockerfile
   networks: ['aikit']
   environment:
     - DB_TYPE=postgresdb
