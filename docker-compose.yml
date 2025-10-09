@@ -7,7 +7,9 @@ networks:
   aikit:
 
 x-n8n: &service-n8n
-  image: n8nio/n8n:latest
+  build:
+    context: .
+    dockerfile: Dockerfile.n8n
   networks: ['aikit']
   environment:
     - DB_TYPE=postgresdb
@@ -18,6 +20,7 @@ x-n8n: &service-n8n
     - N8N_PERSONALIZATION_ENABLED=false
     - N8N_ENCRYPTION_KEY
     - N8N_USER_MANAGEMENT_JWT_SECRET
+    - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
   env_file:
     - path: .env
       required: true
@@ -64,17 +67,3 @@ services:
       - 6333:6333
     volumes:
       - qdrant_storage:/qdrant/storage
-
-  puppeteer:
-    image: ghcr.io/puppeteer/puppeteer:latest
-    hostname: puppeteer
-    container_name: puppeteer
-    networks: ['aikit']
-    restart: unless-stopped
-    # Uncomment if you want to debug or connect from host
-    # ports:
-    #   - "9222:9222"
-    environment:
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-    volumes:
-      - ./shared:/data/shared
